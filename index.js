@@ -1,2 +1,3 @@
-/** entry point */
-/** test access */
+import {config} from './config/index'
+
+console.log(config)
