@@ -5,14 +5,14 @@ let convert = function (line_items, tax_rate_id) {
     let price = 0
 
     if (tax_rate_id == 41375) {
-        coef = 1.21
+        coef = 0.21
     }
     if (typeof line_items == 'undefined') {
         console.error('missing line items')
         return price
     }
     line_items.forEach(element => {
-        price += element.price * coef
+        price += element.price * element.quantity * coef
     });
 
     return _.round(price, 2)
