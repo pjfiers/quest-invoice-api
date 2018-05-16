@@ -8,6 +8,7 @@ let converted = []
 
 /** convert each result and add to array */
 mock.forEach(function (input) {
+    console.info('parsing: ' + input.id)
     converted.push(convertor(input, {boekjaar: 2018, periode: 8}))
 })
 
