@@ -564,6 +564,29 @@ core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
+csv-generate@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/csv-generate/-/csv-generate-2.0.2.tgz#1c26c52be318f1f0b6435f8df3d1249fb1503f4b"
+
+csv-parse@^2.2.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-2.4.0.tgz#d4c72a1533734b2c2a65f486d13091264cacc115"
+
+csv-stringify@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-3.0.0.tgz#ed2b4eaae5a3be382309f7864168458970307d7f"
+  dependencies:
+    lodash.get "~4.4.2"
+
+csv@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/csv/-/csv-3.0.2.tgz#3f29d92cd27c75e3ba21265b5cad29bd2d785358"
+  dependencies:
+    csv-generate "^2.0.2"
+    csv-parse "^2.2.0"
+    csv-stringify "^3.0.0"
+    stream-transform "^1.0.2"
+
 debug@^2.1.2, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -865,6 +888,10 @@ kind-of@^3.0.2:
 kind-of@^6.0.0:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
+
+lodash.get@~4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
 
 lodash@^4.17.4:
   version "4.17.10"
@@ -1211,6 +1238,10 @@ source-map-support@^0.4.15:
 source-map@^0.5.6, source-map@^0.5.7:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
+
+stream-transform@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/stream-transform/-/stream-transform-1.0.2.tgz#47de4d15fbc29b7e2a7e54d25e99538876f114c1"
 
 string-width@^1.0.1, string-width@^1.0.2:
   version "1.0.2"
