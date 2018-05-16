@@ -12,7 +12,7 @@ mock.forEach(function (input) {
 })
 
 /** convert JSON to csv and write to file */
-stringify(converted, function (err, output) {
+stringify(converted, {header: true}, function (err, output) {
     fs.writeFile('./export/test.csv', output, function (err) {
         console.log(err)
     })
