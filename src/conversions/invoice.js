@@ -1,3 +1,5 @@
+import betalingsvoorwaardeConvertor from './betalingsvoorwaarde'
+
 /** will convert a complete invoice */
 let convert = function (input, options) {
     let output = {}
@@ -10,12 +12,7 @@ let convert = function (input, options) {
     output['vervaldatum'] = null
     output['valuta'] = 'EUR'
     output['wisselkoers'] = null
-    if (input.invoice_term_id == 4425) {
-        output['betalingsvoorwaarde'] = 14
-    } else if (input.invoice_term_id == 4826) {
-        output['betalingsvoorwaarde'] = 30
-    }
-
+    output['betalingsvoorwaarde: code'] = betalingsvoorwaardeConvertor(input.invoice_term_id)
 
     return output;
 }
