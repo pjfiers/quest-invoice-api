@@ -1,0 +1,10 @@
+{
+  "name": "quest-invoice-api",
+  "version": "1.0.0",
+  "description": "Fetch invoice data",
+  "main": "index.js",
+  "repository": "git@github.com:pjfiers/quest-invoice-api.git",
+  "author": "Pieterjan Fiers <pieterjan.fiers@citymesh.com>",
+  "license": "MIT",
+  "private": true
+}
