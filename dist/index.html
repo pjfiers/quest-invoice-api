@@ -17,7 +17,13 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             document.getElementById('exportBtn').addEventListener('click', function () {
-                ipcRenderer.send('doExport')
+                let payload = {
+                    'boekjaar': document.querySelector('#year').value,
+                    'period': document.querySelector('#period').value,
+                    'startdate': document.querySelector('#startdate').value,
+                    'enddate': document.querySelector('#enddate').value
+                }
+                ipcRenderer.send('doExport', payload)
             });
         })
     </script>
@@ -45,11 +51,6 @@
             <input class="form-control" id="enddate" name="endate" type="date" />
         </div>
         <button id="exportBtn" class="btn btn-primary">Start export</button>
-    </section>
-    <section>
-        <pre class="output">
-        <code id="output"></code>
-    </pre>
     </section>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"

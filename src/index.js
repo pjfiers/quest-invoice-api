@@ -5,6 +5,7 @@ import fs from 'fs'
 import convertor from './conversions/invoice'
 
 const exporter = function (options) {
+    console.log([options])
     let converted = []
 
     /** convert each result and add to array */
