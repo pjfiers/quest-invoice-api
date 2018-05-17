@@ -9,7 +9,7 @@ let converted = []
 /** convert each result and add to array */
 mock.forEach(function (input) {
     console.info('parsing: ' + input.id)
-    converted.push(convertor(input, {boekjaar: 2018, periode: 8}))
+    converted = converted.concat(convertor(input, {boekjaar: 2018, periode: 8}))
 })
 
 /** convert JSON to csv and write to file */
