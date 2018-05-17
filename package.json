@@ -2,7 +2,7 @@
   "name": "quest-invoice-api",
   "version": "1.0.0",
   "description": "Fetch invoice data",
-  "main": "index.js",
+  "main": "./bundle.js",
   "repository": "git@github.com:pjfiers/quest-invoice-api.git",
   "author": "Pieterjan Fiers <pieterjan.fiers@citymesh.com>",
   "license": "MIT",
@@ -15,9 +15,18 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1"
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-electron": "1.4.15",
+    "babel-preset-es2015": "^6.24.1",
+    "electron": "^2.0.1",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.3",
+    "webpack-node-externals": "^1.7.2"
   },
   "scripts": {
-    "start": "babel-node --presets es2015 ./src/index.js"
+    "export": "babel-node --presets es2015 ./src/index.js",
+    "start": "electron dist/bundle.js",
+    "webpack": "webpack"
   }
 }
