@@ -37,7 +37,11 @@ function createWindow () {
 app.on('ready', createWindow)
 
 ipcMain.on('doExport', (event, payload) => {
-  exporter(payload)
+  exporter(payload).then(function(result) {
+    console.log(result)
+    win.webContents.executeJavaScript("exportDone('" + result.filename + "')")
+    console.log('Export done')
+  })
 })
 
 // Quit when all windows are closed.
