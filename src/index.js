@@ -1,11 +1,10 @@
-import {config} from '../config/index'
+import config from '../config/index'
 import stringify from 'csv-stringify'
 import mock from './mock'
 import fs from 'fs'
 import convertor from './conversions/invoice'
 
 const exporter = function (options) {
-    console.log([options])
     let converted = []
 
     /** convert each result and add to array */
@@ -21,7 +20,11 @@ const exporter = function (options) {
     stringify(converted, {
         header: true
     }, function (err, output) {
-        fs.writeFile('./export/test.csv', output, function (err) {
+        let filename = '';
+        let date = new Date();
+        filename += options.boekjaar + '-' + options.period + '_' + options.startdate + '-' + options.enddate + '_' + date.getTime()
+        filename += '.csv'
+        fs.writeFile('./export/' + filename, output, function (err) {
             console.log(err)
         })
     })
