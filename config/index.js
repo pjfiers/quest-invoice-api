@@ -1,8 +1,6 @@
-/** private config config */
-import {api} from './api'
 
-/** public config */
-export let config = {
-    api_key: api.api_key,
-    api_url: api.api_url
-}
+let fs = require("fs");
+let filecontent = fs.readFileSync("./config/api.json");
+let api = JSON.parse(filecontent)
+
+export default api
