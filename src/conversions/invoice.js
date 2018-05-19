@@ -11,11 +11,11 @@ import kostendragerConverter from './kostendrager'
 import _ from 'lodash'
 
 /** will convert a complete invoice */
-let convert = function (input, options) {
+let convert = function (input, options, filename) {
     let output = []
-
     input.line_items.forEach(lineItem => {
         let line = {}
+        process.stdout.write('[' + lineItem.id + ']')
         line['dagboek: code'] = dagboekConverter(input.line_items) // berekening???
         line['boekjaar'] = options.boekjaar
         line['periode'] = options.periode
