@@ -28,7 +28,9 @@ let convert = function (input, options, filename) {
         line['betalingsvoorwaarde: code'] = betalingsvoorwaardeConverter(input.customer.invoice_term_id)
         line['ordernummer'] = null
         line['uw ref.'] = input.po_number
-        line['Betalingsreferentie Code'] = input.payments[0].payment_method
+        if (typeof input.payments[0] !== 'undefined') {
+            line['Betalingsreferentie Code'] = input.payments[0].payment_method
+        }
         line['naam'] = null
         line['code'] = input.customer.id
         line['grootboekrekening'] = grootboekrekeningConverter(lineItem.item)

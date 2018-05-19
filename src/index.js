@@ -122,8 +122,8 @@ const exporter = function (options) {
           let date = new Date()
           filename += options.boekjaar + '-' + options.period + '_' + options.startdate + '-' + options.enddate + '_' + date.getTime()
           filename += '.csv'
-          fs.append('./export/' + filename, output, function (err) {
-            reject(err)
+          fs.writeFile('./export/' + filename, output, function (err) {
+            if (err) throw err
           })
 
           resolve({
