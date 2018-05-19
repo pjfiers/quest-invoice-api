@@ -117,7 +117,8 @@ const exporter = function (options) {
 
         /** convert JSON to csv and write to file */
         stringify(converted, {
-          header: true
+          header: true,
+          delimiter: ";"
         }, function (err, output) {
           let date = new Date()
           filename += options.boekjaar + '-' + options.period + '_' + options.startdate + '-' + options.enddate + '_' + date.getTime()
