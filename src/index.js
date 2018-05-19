@@ -32,7 +32,7 @@ const exporter = function (options) {
           .then(function (response) {
             console.log("got page", response.data.invoices[0].id)
             //pagedata = response.data.invoices
-            totalPages = 3 //response.data.meta.total_pages
+            totalPages = response.data.meta.total_pages
             console.log("totalpages: ", totalPages)
             fs.appendFile('./export/pages.json', JSON.stringify(response.data), function (err) {
               if (err) throw err
@@ -109,21 +109,22 @@ const exporter = function (options) {
         invoices.forEach(function (input) {
           console.info('parsing: ' + input.id)
           converted = converted.concat(convertor(input, {
-            boekjaar: 2018,
-            periode: 8
+            boekjaar: options.boekjaar,
+            periode: options.period
           }))
         })
         console.info('done parsing, converting to csv')
 
         /** convert JSON to csv and write to file */
         stringify(converted, {
-          header: true
+          header: true,
+          delimiter: ";"
         }, function (err, output) {
           let date = new Date()
           filename += options.boekjaar + '-' + options.period + '_' + options.startdate + '-' + options.enddate + '_' + date.getTime()
           filename += '.csv'
           fs.writeFile('./export/' + filename, output, function (err) {
-            reject(err)
+            if (err) throw err
           })
 
           resolve({

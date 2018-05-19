@@ -11,11 +11,11 @@ import kostendragerConverter from './kostendrager'
 import _ from 'lodash'
 
 /** will convert a complete invoice */
-let convert = function (input, options) {
+let convert = function (input, options, filename) {
     let output = []
-
     input.line_items.forEach(lineItem => {
         let line = {}
+        process.stdout.write('[' + lineItem.id + ']')
         line['dagboek: code'] = dagboekConverter(input.line_items) // berekening???
         line['boekjaar'] = options.boekjaar
         line['periode'] = options.periode
@@ -28,16 +28,18 @@ let convert = function (input, options) {
         line['betalingsvoorwaarde: code'] = betalingsvoorwaardeConverter(input.customer.invoice_term_id)
         line['ordernummer'] = null
         line['uw ref.'] = input.po_number
-        line['Betalingsreferentie Code'] = input.payments[0].payment_method
+        if (typeof input.payments[0] !== 'undefined') {
+            line['Betalingsreferentie Code'] = input.payments[0].payment_method
+        }
         line['naam'] = null
         line['code'] = input.customer.id
         line['grootboekrekening'] = grootboekrekeningConverter(lineItem.item)
         line['omschrijving'] = lineItem.item
         line['btw-code'] = btwcodeConverter(input.customer.tax_rate_id)
         line['btw-percentage'] = btwpercentageConverter(input.customer.tax_rate_id)
-        line['bedrag'] = bedragConverter(input.line_items, input.customer.tax_rate_id)
+        line['bedrag'] = bedragConverter(lineItem, input.customer.tax_rate_id)
         line['aantal'] = _.round(lineItem.quantity, 0)
-        line['btw-bedrag'] = btwbedragConverter(input.line_items, input.customer.tax_rate_id)
+        line['btw-bedrag'] = btwbedragConverter(lineItem, input.customer.tax_rate_id)
         line['opmerkingen'] = lineItem.name
         line['project'] = null
         line['van'] = null
