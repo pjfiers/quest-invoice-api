@@ -32,7 +32,7 @@ const exporter = function (options) {
           .then(function (response) {
             console.log("got page", response.data.invoices[0].id)
             //pagedata = response.data.invoices
-            totalPages = 3 //response.data.meta.total_pages
+            totalPages = response.data.meta.total_pages
             console.log("totalpages: ", totalPages)
             fs.appendFile('./export/pages.json', JSON.stringify(response.data), function (err) {
               if (err) throw err
