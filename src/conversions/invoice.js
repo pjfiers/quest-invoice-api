@@ -39,6 +39,9 @@ let convert = function (input, options, filename) {
         if (input.tax == 0) {
             taxrate = 0
         }
+        if (taxrate > 0 && taxrate < 0.23) {
+            taxrate = 0.21
+        }
         console.log('tax rate ' + taxrate)
 
         line['dagboek: code'] = dagboekConverter(input.line_items) // berekening???
