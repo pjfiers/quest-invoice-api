@@ -9,13 +9,38 @@ import btwbedragConverter from './btwbedrag'
 import kostenplaatsConverter from './kostenplaats'
 import kostendragerConverter from './kostendrager'
 import _ from 'lodash'
+import fs from 'fs'
 
 /** will convert a complete invoice */
 let convert = function (input, options, filename) {
     let output = []
     input.line_items.forEach(lineItem => {
         let line = {}
-        process.stdout.write('[' + lineItem.id + ']')
+        // alerts
+        let alerts = []
+        if (input.customer.tax_rate_id <= 1) {
+            alerts.push('invalide tax_rate_id')
+        }
+        if (input.location_id !== 1643 && input.location_id !== 1644) {
+            alerts.push('invalide kostenplaats ' + input.location_id)
+        }
+        if (input.customer.invoice_term_id !== 4425 && input.customer.invoice_term_id !== 4826) {
+            alerts.push('Invalide betalingsvoorwaarde ' + input.customer.invoice_term_id)
+        }
+
+        if (alerts.length > 0) {
+            let alert = 'Errors for \r\n' + input.id + '\r\n' + JSON.stringify(alerts)
+            fs.appendFile('./export/alerts.txt', alert, function (err) {
+                if (err) throw err
+            })
+        }
+
+        let taxrate = _.round((input.tax / input.subtotal), 2)
+        if (input.tax == 0) {
+            taxrate = 0
+        }
+        console.log('tax rate ' + taxrate)
+
         line['dagboek: code'] = dagboekConverter(input.line_items) // berekening???
         line['boekjaar'] = options.boekjaar
         line['periode'] = options.periode
@@ -35,11 +60,11 @@ let convert = function (input, options, filename) {
         line['code'] = input.customer.id
         line['grootboekrekening'] = grootboekrekeningConverter(lineItem.item)
         line['omschrijving'] = lineItem.item
-        line['btw-code'] = btwcodeConverter(input.customer.tax_rate_id)
-        line['btw-percentage'] = btwpercentageConverter(input.customer.tax_rate_id)
-        line['bedrag'] = bedragConverter(lineItem, input.customer.tax_rate_id)
+        line['btw-code'] = btwcodeConverter(taxrate)
+        line['btw-percentage'] = btwpercentageConverter(taxrate)
+        line['bedrag'] = bedragConverter(lineItem, taxrate)
         line['aantal'] = _.round(lineItem.quantity, 0)
-        line['btw-bedrag'] = btwbedragConverter(lineItem, input.customer.tax_rate_id)
+        line['btw-bedrag'] = btwbedragConverter(lineItem, taxrate)
         line['opmerkingen'] = lineItem.name
         line['project'] = null
         line['van'] = null

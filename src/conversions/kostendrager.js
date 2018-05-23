@@ -6,6 +6,10 @@ let convert = function (input) {
             return 930
         case 460000:
             return 960
+        case 740001:
+            return 899
+        case 460100:
+            return null
     }
 }
 
