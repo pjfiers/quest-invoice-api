@@ -8,8 +8,6 @@ import axios from 'axios'
 let invoices = []
 let pageInvoices = []
 
-
-
 const exporter = function (options) {
   return new Promise(function (resolve, reject) {
     let converted = []
@@ -23,6 +21,12 @@ const exporter = function (options) {
     let n = 1
     let totalPages = 1
 
+    fs.writeFile('./export/alerts.txt', '', function (err) {
+      if (err) throw err
+    })
+
+    let start = new Date();
+
     let getPagePromise = function () {
       return new Promise((resolve, reject) => {
         //let page = pagePages[p]
@@ -34,9 +38,6 @@ const exporter = function (options) {
             //pagedata = response.data.invoices
             totalPages = response.data.meta.total_pages
             console.log("totalpages: ", totalPages)
-            fs.appendFile('./export/pages.json', JSON.stringify(response.data), function (err) {
-              if (err) throw err
-            })
             resolve(response.data.invoices);
           })
           .catch(function (error) {
@@ -54,14 +55,14 @@ const exporter = function (options) {
           setTimeout(function () {
             axios.get(config.api_url + 'invoices/' + input.id + '?api_key=' + config.api_key)
               .then(function (response) {
-                console.log("customer id: ", response.data.invoice.customer.id)
+                console.log("invoice id: ", response.data.invoice.id)
                 //invoices.push(response.data.invoice)
                 resolve(response.data.invoice)
               })
               .catch(function (error) {
                 reject("error with an input")
               });
-          }, 500);
+          }, 250);
         } else {
           resolve("range")
         }
@@ -126,6 +127,9 @@ const exporter = function (options) {
           fs.writeFile('./export/' + filename, output, function (err) {
             if (err) throw err
           })
+
+          let end = new Date() - start;
+          console.info("Execution time: %dms", end);
 
           resolve({
             'success': true,

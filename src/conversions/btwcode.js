@@ -1,6 +1,6 @@
 let convert = function (input) {
     switch (input) {
-        case 41375:
+        case 0.21:
             return 5
         default:
             return 0
