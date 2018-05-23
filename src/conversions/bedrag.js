@@ -8,7 +8,7 @@ let convert = function (lineItem, tax_rate_id) {
         coef = 1.21
     }
 
-    price = lineItem.price / coef
+    price = (lineItem.price / coef) * lineItem.quantity
 
     return _.round(price, 2)
 }
