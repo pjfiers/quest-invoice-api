@@ -13,8 +13,11 @@ const exporter = function (options) {
     let converted = []
     let filename = ''
 
-    let start_date = new Date(options.startdate)
-    let end_date = new Date(options.enddate)
+    let sd = options.startdate+"T00:00:00.000+02:00"
+    let ed = options.enddate+"T23:59:59.999+02:00"
+
+    let start_date = new Date(sd)
+    let end_date = new Date(ed)
 
     let data = []
     let p = 0
@@ -50,8 +53,11 @@ const exporter = function (options) {
     let getInvoicePromise = function () {
       return new Promise((resolve, reject) => {
         let input = pageInvoices[n]
-        let invoice_creationdate = new Date(input.created_at)
-        if (invoice_creationdate > start_date && invoice_creationdate < end_date) {
+
+        let d = input.date+"T12:00:00.000+02:00"
+        let invoice_date = new Date(d)
+
+        if (invoice_date >= start_date && invoice_date <= end_date) {
           setTimeout(function () {
             axios.get(config.api_url + 'invoices/' + input.id + '?api_key=' + config.api_key)
               .then(function (response) {
@@ -60,9 +66,9 @@ const exporter = function (options) {
                 resolve(response.data.invoice)
               })
               .catch(function (error) {
-                reject("error with an input")
+                reject("error with an input:", error)
               });
-          }, 250);
+          }, 300);
         } else {
           resolve("range")
         }
