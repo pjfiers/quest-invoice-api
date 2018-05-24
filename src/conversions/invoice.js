@@ -29,7 +29,7 @@ let convert = function (input, options, filename) {
         }
 
         if (alerts.length > 0) {
-            let alert = 'Errors for \r\n' + input.id + '\r\n' + JSON.stringify(alerts)
+            let alert = ' \r\n Errors for ' + input.id + '\r\n' + JSON.stringify(alerts)
             fs.appendFile('./export/alerts.txt', alert, function (err) {
                 if (err) throw err
             })
@@ -38,6 +38,9 @@ let convert = function (input, options, filename) {
         let taxrate = _.round((input.tax / input.subtotal), 2)
         if (input.tax == 0) {
             taxrate = 0
+        }
+        if (taxrate > 0 && taxrate < 0.23) {
+            taxrate = 0.21
         }
         console.log('tax rate ' + taxrate)
 
