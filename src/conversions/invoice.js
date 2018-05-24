@@ -29,7 +29,7 @@ let convert = function (input, options, filename) {
         }
 
         if (alerts.length > 0) {
-            let alert = 'Errors for \r\n' + input.id + '\r\n' + JSON.stringify(alerts)
+            let alert = ' \r\n Errors for ' + input.id + '\r\n' + JSON.stringify(alerts)
             fs.appendFile('./export/alerts.txt', alert, function (err) {
                 if (err) throw err
             })

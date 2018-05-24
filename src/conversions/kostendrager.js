@@ -7,7 +7,7 @@ let convert = function (input) {
         case 460000:
             return 960
         case 740001:
-            return 899
+            return 990
         case 460100:
             return null
     }
