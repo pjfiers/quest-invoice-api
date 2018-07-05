@@ -10,6 +10,7 @@ import kostenplaatsConverter from './kostenplaats'
 import kostendragerConverter from './kostendrager'
 import _ from 'lodash'
 import fs from 'fs'
+import moment from 'moment'
 
 /** will convert a complete invoice */
 let convert = function (input, options, filename) {
@@ -45,11 +46,11 @@ let convert = function (input, options, filename) {
         console.log('tax rate ' + taxrate)
 
         line['dagboek: code'] = dagboekConverter(input.line_items) // berekening???
-        line['boekjaar'] = options.boekjaar
-        line['periode'] = options.periode
+        line['boekjaar'] = moment(moment(input.date)).add(3, 'M').format('YYYY')
+        line['periode'] = moment(moment(input.date)).add(3, 'M').format('M')
         line['boekstuknummer'] = input.number
         line['Omschrijving: Kopregel'] = null
-        line['boekdatum'] = input.date
+        line['facuurdatum'] = input.date
         line['vervaldatum'] = null
         line['valuta'] = 'EUR'
         line['wisselkoers'] = null
