@@ -33,8 +33,7 @@
             document.getElementById('exportBtn').addEventListener('click', function (event) {
                 document.getElementById('spinner').setAttribute('class', 'ml-4 glyphicon glyphicon-refresh glyphicon-refresh-animate')
                 let payload = {
-                    'boekjaar': document.querySelector('#year').value,
-                    'period': document.querySelector('#period').value,
+                    'mode': document.querySelector('input[name="mode"]:checked').value,
                     'startdate': document.querySelector('#startdate').value,
                     'enddate': document.querySelector('#enddate').value
                 }
@@ -54,13 +53,10 @@
         <h1>Export Invoices from RepairShopr</h1>
     </header>
     <section class="m-2 p-2">
-        <div class="form-group">
-            <label for="year">Boekjaar</label>
-            <input class="form-control" id="year" name="year" type="number" min=2018 max=2099 value=2018 />
-        </div>
-        <div class="form-group">
-            <label for="period">Periode</label>
-            <input class="form-control" id="period" name="period" type="number" min=1 />
+            <input id="mode1" name="mode" type="radio" value="invoice" checked=1/>
+            <label for="year">factuur?</label><br />
+            <input id="mode2" name="mode" type="radio" value="transaction"/>
+            <label for="year">transactie?</label>
         </div>
         <div class="form-group">
             <label for="startdate">Start-datum</label>

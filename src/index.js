@@ -2,7 +2,8 @@ import config from '../config/index'
 import stringify from 'csv-stringify'
 import mock from './mock'
 import fs from 'fs'
-import convertor from './conversions/invoice'
+import invoice from './conversions/invoice'
+import transaction from './conversions/transaction'
 import axios from 'axios'
 //import databuilder from './data'
 let invoices = []
@@ -10,6 +11,7 @@ let pageInvoices = []
 
 const exporter = function (options) {
   return new Promise(function (resolve, reject) {
+
     let converted = []
     let filename = ''
 
@@ -110,15 +112,25 @@ const exporter = function (options) {
         })
       } else {
         /** convert each result and add to array */
-        fs.writeFile('./export/invoices.json',JSON.stringify(invoices), function (err) {
+        fs.writeFile('./export/invoices.json', JSON.stringify(invoices), function (err) {
           if (err) throw err
         })
         invoices.forEach(function (input) {
-          console.info('parsing: ' + input.id)
-          converted = converted.concat(convertor(input, {
-            boekjaar: options.boekjaar,
-            periode: options.period
-          }))
+          if (options.mode == 'invoice') {
+            console.info('parsing invoice: ' + input.id)
+            converted = converted.concat(invoice(input, {
+              boekjaar: options.boekjaar,
+              periode: options.period,
+              mode: options.mode
+            }))
+          } else if (options.mode == 'transaction') {
+            console.info('parsing transaction: ' + input.id)
+            converted = converted.concat(transaction(input, {
+              boekjaar: options.boekjaar,
+              periode: options.period,
+              mode: options.mode
+            }))
+          }
         })
         console.info('done parsing, converting to csv')
 
@@ -128,7 +140,7 @@ const exporter = function (options) {
           delimiter: ";"
         }, function (err, output) {
           let date = new Date()
-          filename += options.boekjaar + '-' + options.period + '_' + options.startdate + '-' + options.enddate + '_' + date.getTime()
+          filename += options.mode + '-' + options.startdate + '-' + options.enddate + '_' + date.getTime()
           filename += '.csv'
           fs.writeFile('./export/' + filename, output, function (err) {
             if (err) throw err
