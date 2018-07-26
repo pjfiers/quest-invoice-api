@@ -8,10 +8,21 @@ import axios from 'axios'
 //import databuilder from './data'
 let invoices = []
 let pageInvoices = []
+let allPages = []
 
 const exporter = function (options) {
   return new Promise(function (resolve, reject) {
+    let endpoint = ''
+    switch (options.mode) {
+      case 'transaction':
+        endpoint = config.api_url + 'payments'
+        break;
 
+      case 'invoice':
+      default:
+        endpoint = config.api_url + 'invoices'
+        break;
+    }
     let converted = []
     let filename = ''
 
@@ -33,14 +44,22 @@ const exporter = function (options) {
       return new Promise((resolve, reject) => {
         //let page = pagePages[p]
         //axios call hier
-        console.info(config.api_url + 'invoices?api_key=' + config.api_key + '&page=' + p)
-        axios.get(config.api_url + 'invoices?api_key=' + config.api_key + '&page=' + p)
+        console.info(endpoint + ' page ' + p)
+        axios.get(endpoint + '?api_key=' + config.api_key + '&page=' + p)
           .then(function (response) {
-            console.log("got page", response.data.invoices[0].id)
-            //pagedata = response.data.invoices
+            //pagedata = response.data.
+
             totalPages = response.data.meta.total_pages
             console.log("totalpages: ", totalPages)
-            resolve(response.data.invoices);
+            switch (options.mode) {
+              case 'transaction':
+                resolve(response.data.payments);
+                break;
+
+              default:
+                resolve(response.data.invoices);
+
+            }
           })
           .catch(function (error) {
             console.log('error: ', error)
@@ -55,13 +74,24 @@ const exporter = function (options) {
         let invoice_creationdate = new Date(input.created_at)
         if (invoice_creationdate > start_date && invoice_creationdate < end_date) {
           setTimeout(function () {
-            axios.get(config.api_url + 'invoices/' + input.id + '?api_key=' + config.api_key)
+            axios.get(endpoint + '/' + input.id + '?api_key=' + config.api_key)
               .then(function (response) {
-                console.log("invoice id: ", response.data.invoice.id)
-                //invoices.push(response.data.invoice)
-                resolve(response.data.invoice)
+                switch (options.mode) {
+                  case 'transaction':
+                    console.log(options.mode + " id: ", response.data.payment.id)
+                    //invoices.push(response.data.invoice)
+                    resolve(response.data.payment)
+                    break;
+
+                  default:
+                    console.log(options.mode + " id: ", response.data.invoice.id)
+                    //invoices.push(response.data.invoice)
+                    resolve(response.data.invoice)
+
+                }
               })
               .catch(function (error) {
+                console.error(error)
                 reject("error with an input")
               });
           }, 250);
@@ -79,6 +109,7 @@ const exporter = function (options) {
         getPagePromise().then(function (resultp) {
           pageInvoices = []
           pageInvoices = resultp
+          allPages.push(pageInvoices)
           //alle invoices ophalen voor de pagina
           n = pageInvoices.length
 
@@ -106,7 +137,10 @@ const exporter = function (options) {
         })
       } else {
         /** convert each result and add to array */
-        fs.writeFile('./export/invoices.json', JSON.stringify(invoices), function (err) {
+        fs.writeFile('./export/' + options.mode + '.json', JSON.stringify(invoices), function (err) {
+          if (err) throw err
+        })
+        fs.writeFile('./export/pages.json', JSON.stringify(allPages), function (err) {
           if (err) throw err
         })
         invoices.forEach(function (input) {
