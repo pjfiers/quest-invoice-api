@@ -31,9 +31,9 @@ let convert = function (input, options, filename) {
 
         if (alerts.length > 0) {
             let alert = ' \r\n Errors for ' + input.id + '\r\n' + JSON.stringify(alerts)
-            fs.appendFile('./export/alerts.txt', alert, function (err) {
+            /*fs.appendFile('./export/alerts.txt', alert, function (err) {
                 if (err) throw err
-            })
+            })*/
         }
 
         let taxrate = _.round((input.tax / input.subtotal), 2)
@@ -69,7 +69,7 @@ let convert = function (input, options, filename) {
         line['bedrag'] = bedragConverter(lineItem, taxrate)
         line['aantal'] = _.round(lineItem.quantity, 0)
         line['btw-bedrag'] = btwbedragConverter(lineItem, taxrate)
-        line['opmerkingen'] = lineItem.name
+        line['opmerkingen'] = _.trim(lineItem.name, '- ')
         line['project'] = null
         line['van'] = null
         line['naar'] = null

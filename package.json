@@ -28,6 +28,7 @@
   "scripts": {
     "export": "babel-node --presets es2015 ./src/index.js",
     "start": "electron dist/bundle.js",
-    "webpack": "webpack"
+    "webpack": "webpack",
+    "reparse": "babel-node --presets es2015  ./src/reparse.js"
   }
 }
