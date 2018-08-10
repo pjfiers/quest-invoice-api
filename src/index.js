@@ -28,6 +28,8 @@ const exporter = function (options) {
 
     let start_date = new Date(options.startdate)
     let end_date = new Date(options.enddate)
+    console.log(options)
+    console.log(start_date)
 
     let data = []
     let p = 0
@@ -72,7 +74,7 @@ const exporter = function (options) {
       return new Promise((resolve, reject) => {
         let input = pageInvoices[n]
         let invoice_creationdate = new Date(input.created_at)
-        if (invoice_creationdate > start_date && invoice_creationdate < end_date) {
+        if (options.startdate == '' || (invoice_creationdate > start_date && invoice_creationdate < end_date)) {
           setTimeout(function () {
             axios.get(endpoint + '/' + input.id + '?api_key=' + config.api_key)
               .then(function (response) {
