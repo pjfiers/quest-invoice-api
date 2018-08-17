@@ -30,6 +30,7 @@
     "start": "electron dist/bundle.js",
     "webpack": "webpack",
     "reparse": "babel-node --presets es2015  ./src/reparse.js",
-    "run-invoice": "babel-node --presets es2015  ./src/cli.js"
+    "run-invoice": "babel-node --presets es2015  ./src/cli.js",
+    "run-transaction": "babel-node --presets es2015 ./src/cli-transaction.js"
   }
 }

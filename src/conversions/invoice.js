@@ -15,6 +15,9 @@ import moment from 'moment'
 /** will convert a complete invoice */
 let convert = function (input, options, filename) {
     let output = []
+    if (typeof input.line_items == 'undefined') {
+        input['line_items'] = []
+    }
     input.line_items.forEach(lineItem => {
         let line = {}
         // alerts
