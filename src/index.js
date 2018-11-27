@@ -96,7 +96,7 @@ const exporter = function (options) {
                 console.error(error)
                 reject("error with an input")
               });
-          }, 250);
+          }, 300);
         } else {
           resolve("range")
         }
