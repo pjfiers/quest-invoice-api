@@ -1,6 +1,6 @@
 import config from '../config/index'
 import stringify from 'csv-stringify'
-import mock from './mock'
+import moment from 'moment'
 import fs from 'fs'
 import invoice from './conversions/invoice'
 import transaction from './conversions/transaction'
@@ -9,6 +9,10 @@ import axios from 'axios'
 let invoices = []
 let pageInvoices = []
 let allPages = []
+const startYear = moment().startOf('year')
+const endYear = moment().endOf('year').add(1, 'day')
+const startMonth = moment().startOf('month')
+const endMonth = moment().endOf('month').add(1, 'day')
 
 const exporter = function (options) {
   return new Promise(function (resolve, reject) {
@@ -23,8 +27,6 @@ const exporter = function (options) {
         endpoint = config.api_url + 'invoices'
         break;
     }
-    let converted = []
-    let filename = ''
 
     let start_date = new Date(options.startdate)
     let end_date = new Date(options.enddate)
@@ -145,44 +147,87 @@ const exporter = function (options) {
         fs.writeFile('./export/pages.json', JSON.stringify(allPages), function (err) {
           if (err) throw err
         })
+
+        let converted = []
+        let thisYear = []
+        let thisMonth = []
         invoices.forEach(function (input) {
-          if (options.mode == 'invoice') {
-            console.info('parsing invoice: ' + input.id)
-            converted = converted.concat(invoice(input, {
-              boekjaar: options.boekjaar,
-              periode: options.period,
-              mode: options.mode
-            }))
-          } else if (options.mode == 'transaction') {
-            console.info('parsing transaction: ' + input.id)
-            converted = converted.concat(transaction(input, {
-              boekjaar: options.boekjaar,
-              periode: options.period,
-              mode: options.mode
-            }))
-          }
+            if (options.mode == 'invoice') {
+                console.info('parsing invoice: ' + input.id)
+                let invoice_creationdate = moment(input.created_at)
+                console.log(input.created_at)
+                let parsed = invoice(input, {
+                    boekjaar: options.boekjaar,
+                    periode: options.period,
+                    mode: options.mode
+                })
+                converted = converted.concat(parsed)
+                if (invoice_creationdate.isAfter(startMonth) && invoice_creationdate.isBefore(endMonth)) {
+                    thisMonth = thisMonth.concat(parsed)
+                }
+                if (invoice_creationdate.isAfter(startYear) && invoice_creationdate.isBefore(endYear)) {
+                    thisYear = thisYear.concat(parsed)
+                }
+            } else if (options.mode == 'transaction') {
+                console.info('parsing transaction: ' + input.id)
+                let invoice_creationdate = moment(input.created_at)
+                let parsed = transaction(input, {
+                    boekjaar: options.boekjaar,
+                    periode: options.period,
+                    mode: options.mode
+                })
+                converted = converted.concat(parsed)
+                if (invoice_creationdate.isAfter(startMonth) && invoice_creationdate.isBefore(endMonth)) {
+                    thisMonth = thisMonth.concat(parsed)
+                }
+                if (invoice_creationdate.isAfter(startYear) && invoice_creationdate.isBefore(endYear)) {
+                    thisYear = thisYear.concat(parsed)
+                }
+            }
         })
         console.info('done parsing, converting to csv')
 
         /** convert JSON to csv and write to file */
         stringify(converted, {
-          header: true,
-          delimiter: ";"
+            header: true,
+            delimiter: ";"
         }, function (err, output) {
-          let date = new Date()
-          filename += options.mode + '-' + options.startdate + '-' + options.enddate + '_' + date.getTime()
-          filename += '.csv'
-          fs.writeFile('./export/' + filename, output, function (err) {
-            if (err) throw err
-          })
+            let date = new Date()
+            let filename = 'reparsed_';
+            filename += options.mode + '-' + options.startdate + '-' + options.enddate + '_' + date.getTime()
+            filename += '.csv'
+            fs.writeFile('./export/' + filename, output, function (err) {
+                if (err) throw err
+            })
 
-          let end = new Date() - start;
-          console.info("Execution time: %dms", end);
+        })
 
-          resolve({
-            'success': true,
-            'filename': filename
-          })
+        stringify(thisMonth, {
+            header: true,
+            delimiter: ";"
+        }, function (err, output) {
+            let date = new Date()
+            let filename = options.mode + '_'
+            filename += startMonth.format('MMMM') + '_' + startMonth.format('YYYY') + '_' + date.getTime()
+            filename += '.csv'
+            fs.writeFile('./export/' + filename, output, function (err) {
+                if (err) throw err
+            })
+
+        })
+
+        stringify(thisYear, {
+            header: true,
+            delimiter: ";"
+        }, function (err, output) {
+            let date = new Date()
+            let filename = options.mode + '_'
+            filename += startMonth.format('YYYY') + '_' + date.getTime()
+            filename += '.csv'
+            fs.writeFile('./export/' + filename, output, function (err) {
+                if (err) throw err
+            })
+
         })
 
         console.log("ended page loop")
@@ -190,8 +235,6 @@ const exporter = function (options) {
     }
 
     getPage()
-
-
 
   })
 }

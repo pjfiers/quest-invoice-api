@@ -1,14 +1,15 @@
-import config from '../config/index'
 import stringify from 'csv-stringify'
-import mock from './mock'
 import fs from 'fs'
 import invoice from './conversions/invoice'
 import transaction from './conversions/transaction'
-import axios from 'axios'
+import moment from 'moment'
 //import databuilder from './data'
 let invoices = []
-let pageInvoices = []
-let allPages = []
+
+const startYear = moment().startOf('year')
+const endYear = moment().endOf('year').add(1, 'day')
+const startMonth = moment().startOf('month')
+const endMonth = moment().endOf('month').add(1, 'day')
 
 let options = {
     boekjaar: 1,
@@ -25,22 +26,40 @@ fs.readFile('./export/' + options.mode + '.json', function read(err, data) {
 
 let parseInvoices = function () {
     let converted = []
-    let filename = 'reparsed_';
+    let thisYear = []
+    let thisMonth = []
     invoices.forEach(function (input) {
         if (options.mode == 'invoice') {
             console.info('parsing invoice: ' + input.id)
-            converted = converted.concat(invoice(input, {
+            let invoice_creationdate = moment(input.created_at)
+            console.log(input.created_at)
+            let parsed = invoice(input, {
                 boekjaar: options.boekjaar,
                 periode: options.period,
                 mode: options.mode
-            }))
+            })
+            converted = converted.concat(parsed)
+            if (invoice_creationdate.isAfter(startMonth) && invoice_creationdate.isBefore(endMonth)) {
+                thisMonth = thisMonth.concat(parsed)
+            }
+            if (invoice_creationdate.isAfter(startYear) && invoice_creationdate.isBefore(endYear)) {
+                thisYear = thisYear.concat(parsed)
+            }
         } else if (options.mode == 'transaction') {
             console.info('parsing transaction: ' + input.id)
-            converted = converted.concat(transaction(input, {
+            let invoice_creationdate = moment(input.created_at)
+            let parsed = transaction(input, {
                 boekjaar: options.boekjaar,
                 periode: options.period,
                 mode: options.mode
-            }))
+            })
+            converted = converted.concat(parsed)
+            if (invoice_creationdate.isAfter(startMonth) && invoice_creationdate.isBefore(endMonth)) {
+                thisMonth = thisMonth.concat(parsed)
+            }
+            if (invoice_creationdate.isAfter(startYear) && invoice_creationdate.isBefore(endYear)) {
+                thisYear = thisYear.concat(parsed)
+            }
         }
     })
     console.info('done parsing, converting to csv')
@@ -51,7 +70,36 @@ let parseInvoices = function () {
         delimiter: ";"
     }, function (err, output) {
         let date = new Date()
+        let filename = 'reparsed_';
         filename += options.mode + '-' + options.startdate + '-' + options.enddate + '_' + date.getTime()
+        filename += '.csv'
+        fs.writeFile('./export/' + filename, output, function (err) {
+            if (err) throw err
+        })
+
+    })
+
+    stringify(thisMonth, {
+        header: true,
+        delimiter: ";"
+    }, function (err, output) {
+        let date = new Date()
+        let filename = 'reparsed_';
+        filename += startMonth.format('MMMM') + '_' + startMonth.format('YYYY') + '_' + date.getTime()
+        filename += '.csv'
+        fs.writeFile('./export/' + filename, output, function (err) {
+            if (err) throw err
+        })
+
+    })
+
+    stringify(thisYear, {
+        header: true,
+        delimiter: ";"
+    }, function (err, output) {
+        let date = new Date()
+        let filename = 'reparsed_';
+        filename += startMonth.format('YYYY') + '_' + date.getTime()
         filename += '.csv'
         fs.writeFile('./export/' + filename, output, function (err) {
             if (err) throw err

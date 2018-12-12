@@ -43,10 +43,12 @@ let convert = function (input, options, filename) {
         if (input.tax == 0) {
             taxrate = 0
         }
-        if (taxrate > 0 && taxrate < 0.23) {
+        if (taxrate > 20 && taxrate < 0.23) {
             taxrate = 0.21
         }
-        console.log('tax rate ' + taxrate)
+        if (taxrate < 0) {
+            taxrate = 0;
+        }
 
         line['dagboek: code'] = dagboekConverter(input.line_items) // berekening???
         line['boekjaar'] = moment(moment(input.date)).add(3, 'M').format('YYYY')
@@ -62,13 +64,15 @@ let convert = function (input, options, filename) {
         line['uw ref.'] = input.po_number
         if (typeof input.payments[0] !== 'undefined') {
             line['Betalingsreferentie Code'] = input.payments[0].payment_method
+        } else {
+            line['Betalingsreferentie Code'] = null
         }
         line['naam'] = null
         line['code'] = input.customer.id
         line['grootboekrekening'] = grootboekrekeningConverter(lineItem.item)
         line['omschrijving'] = lineItem.item
-        line['btw-code'] = btwcodeConverter(taxrate)
-        line['btw-percentage'] = btwpercentageConverter(taxrate)
+        line['btw-code'] = btwcodeConverter(input.customer, line['grootboekrekening'])
+        line['btw-percentage'] = taxrate * 100; //btwpercentageConverter(input.customer)
         line['bedrag'] = bedragConverter(lineItem, taxrate)
         line['aantal'] = _.round(lineItem.quantity, 0)
         line['btw-bedrag'] = btwbedragConverter(lineItem, taxrate)
