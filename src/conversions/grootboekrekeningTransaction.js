@@ -1,11 +1,7 @@
 import _ from 'lodash'
 
 let convert = function (input) {
-    if (typeof input.payments[0] == 'undefined') {
-        console.log('invalide grootboekrekening')
-        return 700000
-    }
-    let methode = input.payments[0].payment_method
+    let methode = input.payment_method
     if (_.lowerCase(methode).indexOf('bancontact') == 0) {
         return 580100
     }
@@ -28,7 +24,7 @@ let convert = function (input) {
         return 580600
     }
 
-    console.log('invalide grootboekrekening: ' + input.payments[0].payment_method)
+    console.log('invalide grootboekrekening: ' + input.payment_method)
     return 700000
 }
 
